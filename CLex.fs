@@ -353,7 +353,7 @@ and Token  lexbuf =
           )
   | 30 -> ( 
 # 95 "CLex.fsl"
-                                     Comment lexbuf; Token lexbuf 
+                                     CommentAnother lexbuf; Token lexbuf 
 # 357 "CLex.fs"
           )
   | 31 -> ( 
