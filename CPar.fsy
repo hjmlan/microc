@@ -17,7 +17,7 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <int> CSTINT CSTBOOL  // <int> 是词元的语义值类型
 %token <string> CSTSTRING NAME
 
-%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR
+%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR SWITCH CASE DEFAULT 
 %token PLUS MINUS TIMES DIV MOD
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
@@ -140,6 +140,7 @@ StmtM:  /* No unbalanced if-else */
   | IF LPAR Expr RPAR StmtM ELSE StmtM  { If($3, $5, $7)       }
   | WHILE LPAR Expr RPAR StmtM          { While($3, $5)        }
   | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM { For($3, $5, $7, $9) }
+  | SWITCH LPAR Expr RPAR LBRACE StmtS RBRACE         {Switch($3,$6) }
 ;
 
 StmtU:
@@ -214,4 +215,9 @@ Const:
 Type:
     INT                                 { TypI     }
   | CHAR                                { TypC     }
+;
+// SWITCH 语句块
+StmtS:
+    DEFAULT LBRACE StmtM RBRACE                       { Default($3)    }
+  | CASE Expr LBRACE StmtM RBRACE StmtS             { Case($2,$4,$6)}
 ;

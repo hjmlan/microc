@@ -280,6 +280,18 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
       
       loop store1
 
+    | Switch (e, body) ->
+        let (e0, store) = eval e locEnv gloEnv store
+        let rec loop store body = 
+            match body with
+                | Default(body1)  ->   exec body1 locEnv gloEnv store
+                | Case(e1,body1,body2) -> 
+                    let (e2, store) = eval e1 locEnv gloEnv store
+                    if e0 = e2 then exec body1 locEnv gloEnv store
+                    else loop store body2
+                | _ -> store    
+        loop store body
+        
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
         let (_, store1) = eval e locEnv gloEnv store
