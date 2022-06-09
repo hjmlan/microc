@@ -91,6 +91,8 @@ type funEnv = (paramdecs * stmt) env
 
 type gloEnv = int env * funEnv
 
+type structEnv = (string *  paramdecs * int ) list
+
 (* The store maps addresses (ints) to values (ints): *)
 
 //地址是store上的的索引值
@@ -269,6 +271,14 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                 store2 //退出循环返回 环境store2
 
         loop store
+    | For(e1,e2,e3,body) ->
+      let (v, store1) = eval e1 locEnv gloEnv store
+      let rec loop store1 = 
+          let (v,store2) = eval e2 locEnv gloEnv store1
+          if v<>0 then loop(snd(eval e3 locEnv gloEnv (exec body locEnv gloEnv store2)))
+          else store2
+      
+      loop store1
 
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
